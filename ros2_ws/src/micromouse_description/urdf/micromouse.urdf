@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<robot name="simple_box">
+  <!-- Link Definition -->
+  <link name="base_link">
+    <!-- Visual Geometry -->
+    <visual>
+      <geometry>
+        <box size="0.5 0.5 0.5"/> <!-- Box dimensions -->
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1.0"/> <!-- Gray color -->
+      </material>
+    </visual>
+
+    <!-- Collision Geometry -->
+    <collision>
+      <geometry>
+        <box size="0.5 0.5 0.5"/> <!-- Same size as visual -->
+      </geometry>
+    </collision>
+
+    <!-- Inertial Properties -->
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.083" ixy="0.0" ixz="0.0" iyy="0.083" iyz="0.0" izz="0.083"/>
+    </inertial>
+  </link>
+</robot>

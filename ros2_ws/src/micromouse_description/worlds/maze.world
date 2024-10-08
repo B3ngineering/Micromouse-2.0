@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="default">
+
+    <!-- Include the ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- Include a light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Define the physics engine -->
+    <physics type="ode">
+      <gravity>0 0 -9.81</gravity>
+    </physics>
+
+    <!-- Default background color -->
+    <scene>
+      <ambient>0.7 0.7 0.7 1</ambient>
+      <background>0.5 0.5 0.5 1</background>
+    </scene>
+
+  </world>
+</sdf>
