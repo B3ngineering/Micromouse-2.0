@@ -18,7 +18,7 @@ def generate_launch_description():
 
     urdf_path = os.path.join(
         get_package_share_directory('micromouse_description'),
-        'urdf/micromouse.urdf'
+        'urdf/micromouse.urdf.xacro'
     )
 
     # # Gazebo launch setup (this includes the world)
