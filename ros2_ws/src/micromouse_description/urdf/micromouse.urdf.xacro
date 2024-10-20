@@ -2,5 +2,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="micromouse">
 
     <xacro:include filename="mouse_core.xacro" />
+    <xacro:include filename="gazebo_control.xacro" />
 
 </robot>
