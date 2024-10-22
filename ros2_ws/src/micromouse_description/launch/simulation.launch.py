@@ -31,5 +31,5 @@ def generate_launch_description():
     return LaunchDescription([
         rsp,
         gazebo,
-        # spawn_entity,
+        spawn_entity,
     ])

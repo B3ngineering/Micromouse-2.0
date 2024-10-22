@@ -1,5 +1,11 @@
+<sdf version='1.7'>
 <world name="maze_world">
-
+  <include>
+    <uri>model://ground_plane</uri>
+  </include>
+  <include>
+    <uri>model://sun</uri>
+  </include>
   <model name="wall_0_0">
     <pose>0 0 0 0 0 0</pose>
     <link name="link">
@@ -4599,3 +4605,4 @@
     </link>
   </model>
 </world>
+</sdf>

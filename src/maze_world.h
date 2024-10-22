@@ -11,6 +11,7 @@ void generateMazeWorld(const vector<vector<int>>& maze, const string& filename) 
     }
 
     // General world settings
+    worldFile << "sdf version='1.7'>\n";
     worldFile << "<world name=\"maze_world\">\n";
     worldFile << "  <include>\n";
     worldFile << "    <uri>model://ground_plane</uri>\n";
@@ -47,5 +48,6 @@ void generateMazeWorld(const vector<vector<int>>& maze, const string& filename) 
     }
 
     worldFile << "</world>\n";
+    worlfFile << "</sdf>\n";
     worldFile.close();
 }
