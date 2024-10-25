@@ -65,12 +65,18 @@ public:
     }
 };
 
+
 int main() {
     MazeGenerator my_maze(10, 10);
     my_maze.generateMaze();
     my_maze.printMaze();
 
-    
-    generateMazeWorld(my_maze.maze, "maze.world");
+    pair<int, int> start, end;
+
+    // Choose random start and end points
+    start = {1, 1};
+    end = {19, 19};
+
+    generateMazeWorld(my_maze.maze, "maze.world", start, end);
     return 0;
 }

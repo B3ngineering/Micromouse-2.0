@@ -424,22 +424,25 @@
       </visual>
     </link>
   </model>
-  <model name="wall_2_1">
-    <pose>2 1 0 0 0 0</pose>
+  <model name="start_1_1">
+    <pose>1 1 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
           <box>
-            <size>1 1 1</size>
+            <size>1 1 0.001</size>
           </box>
         </geometry>
       </collision>
       <visual name="visual">
         <geometry>
           <box>
-            <size>1 1 1</size>
+            <size>1 1 0.001</size>
           </box>
         </geometry>
+        <material>
+          <ambient>0 0 1 1</ambient>
+        </material>
       </visual>
     </link>
   </model>
@@ -483,6 +486,25 @@
   </model>
   <model name="wall_2_2">
     <pose>2 2 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_3_2">
+    <pose>3 2 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -616,6 +638,25 @@
   </model>
   <model name="wall_10_2">
     <pose>10 2 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_11_2">
+    <pose>11 2 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -804,8 +845,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_2_3">
-    <pose>2 3 0 0 0 0</pose>
+  <model name="wall_6_3">
+    <pose>6 3 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -823,46 +864,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_8_3">
-    <pose>8 3 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_10_3">
-    <pose>10 3 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_12_3">
-    <pose>12 3 0 0 0 0</pose>
+  <model name="wall_14_3">
+    <pose>14 3 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -901,6 +904,25 @@
   </model>
   <model name="wall_0_4">
     <pose>0 4 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_1_4">
+    <pose>1 4 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -975,25 +997,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_5_4">
-    <pose>5 4 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_6_4">
     <pose>6 4 0 0 0 0</pose>
     <link name="link">
@@ -1015,6 +1018,25 @@
   </model>
   <model name="wall_8_4">
     <pose>8 4 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_9_4">
+    <pose>9 4 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1222,8 +1244,27 @@
       </visual>
     </link>
   </model>
-  <model name="wall_2_5">
-    <pose>2 5 0 0 0 0</pose>
+  <model name="wall_4_5">
+    <pose>4 5 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_8_5">
+    <pose>8 5 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1260,8 +1301,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_14_5">
-    <pose>14 5 0 0 0 0</pose>
+  <model name="wall_12_5">
+    <pose>12 5 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1279,8 +1320,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_18_5">
-    <pose>18 5 0 0 0 0</pose>
+  <model name="wall_14_5">
+    <pose>14 5 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1450,46 +1491,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_9_6">
-    <pose>9 6 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_10_6">
     <pose>10 6 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_11_6">
-    <pose>11 6 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1583,6 +1586,25 @@
       </visual>
     </link>
   </model>
+  <model name="wall_17_6">
+    <pose>17 6 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
   <model name="wall_18_6">
     <pose>18 6 0 0 0 0</pose>
     <link name="link">
@@ -1659,8 +1681,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_4_7">
-    <pose>4 7 0 0 0 0</pose>
+  <model name="wall_6_7">
+    <pose>6 7 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1678,8 +1700,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_8_7">
-    <pose>8 7 0 0 0 0</pose>
+  <model name="wall_12_7">
+    <pose>12 7 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1699,25 +1721,6 @@
   </model>
   <model name="wall_14_7">
     <pose>14 7 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_16_7">
-    <pose>16 7 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1811,25 +1814,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_5_8">
-    <pose>5 8 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_6_8">
     <pose>6 8 0 0 0 0</pose>
     <link name="link">
@@ -1851,6 +1835,25 @@
   </model>
   <model name="wall_8_8">
     <pose>8 8 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_9_8">
+    <pose>9 8 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -1908,25 +1911,6 @@
   </model>
   <model name="wall_12_8">
     <pose>12 8 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_13_8">
-    <pose>13 8 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -2020,6 +2004,25 @@
       </visual>
     </link>
   </model>
+  <model name="wall_19_8">
+    <pose>19 8 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
   <model name="wall_20_8">
     <pose>20 8 0 0 0 0</pose>
     <link name="link">
@@ -2058,6 +2061,63 @@
       </visual>
     </link>
   </model>
+  <model name="wall_2_9">
+    <pose>2 9 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_4_9">
+    <pose>4 9 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_6_9">
+    <pose>6 9 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
   <model name="wall_8_9">
     <pose>8 9 0 0 0 0</pose>
     <link name="link">
@@ -2077,8 +2137,30 @@
       </visual>
     </link>
   </model>
-  <model name="wall_12_9">
-    <pose>12 9 0 0 0 0</pose>
+  <model name="goal_9_9">
+    <pose>9 9 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 0.1</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0 1 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_14_9">
+    <pose>14 9 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -2153,25 +2235,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_3_10">
-    <pose>3 10 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_4_10">
     <pose>4 10 0 0 0 0</pose>
     <link name="link">
@@ -2229,25 +2292,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_7_10">
-    <pose>7 10 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_8_10">
     <pose>8 10 0 0 0 0</pose>
     <link name="link">
@@ -2269,6 +2313,25 @@
   </model>
   <model name="wall_10_10">
     <pose>10 10 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_11_10">
+    <pose>11 10 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -2571,8 +2634,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_1_12">
-    <pose>1 12 0 0 0 0</pose>
+  <model name="wall_2_12">
+    <pose>2 12 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -2590,8 +2653,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_2_12">
-    <pose>2 12 0 0 0 0</pose>
+  <model name="wall_3_12">
+    <pose>3 12 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -2666,8 +2729,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_8_12">
-    <pose>8 12 0 0 0 0</pose>
+  <model name="wall_7_12">
+    <pose>7 12 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -2685,8 +2748,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_9_12">
-    <pose>9 12 0 0 0 0</pose>
+  <model name="wall_8_12">
+    <pose>8 12 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -2875,8 +2938,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_4_13">
-    <pose>4 13 0 0 0 0</pose>
+  <model name="wall_2_13">
+    <pose>2 13 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -3046,25 +3109,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_3_14">
-    <pose>3 14 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_4_14">
     <pose>4 14 0 0 0 0</pose>
     <link name="link">
@@ -3086,25 +3130,6 @@
   </model>
   <model name="wall_6_14">
     <pose>6 14 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_7_14">
-    <pose>7 14 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -3198,25 +3223,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_13_14">
-    <pose>13 14 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_14_14">
     <pose>14 14 0 0 0 0</pose>
     <link name="link">
@@ -3274,25 +3280,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_19_14">
-    <pose>19 14 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_20_14">
     <pose>20 14 0 0 0 0</pose>
     <link name="link">
@@ -3333,6 +3320,101 @@
   </model>
   <model name="wall_2_15">
     <pose>2 15 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_4_15">
+    <pose>4 15 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_6_15">
+    <pose>6 15 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_10_15">
+    <pose>10 15 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_12_15">
+    <pose>12 15 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_14_15">
+    <pose>14 15 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -3464,25 +3546,6 @@
       </visual>
     </link>
   </model>
-  <model name="wall_5_16">
-    <pose>5 16 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_6_16">
     <pose>6 16 0 0 0 0</pose>
     <link name="link">
@@ -3540,46 +3603,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_9_16">
-    <pose>9 16 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_10_16">
     <pose>10 16 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_11_16">
-    <pose>11 16 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -3616,46 +3641,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_13_16">
-    <pose>13 16 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_14_16">
     <pose>14 16 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_15_16">
-    <pose>15 16 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -3730,6 +3717,25 @@
       </visual>
     </link>
   </model>
+  <model name="wall_19_16">
+    <pose>19 16 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
   <model name="wall_20_16">
     <pose>20 16 0 0 0 0</pose>
     <link name="link">
@@ -3768,8 +3774,65 @@
       </visual>
     </link>
   </model>
+  <model name="wall_6_17">
+    <pose>6 17 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_8_17">
+    <pose>8 17 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
   <model name="wall_12_17">
     <pose>12 17 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  <model name="wall_14_17">
+    <pose>14 17 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -3920,46 +3983,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_5_18">
-    <pose>5 18 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
   <model name="wall_6_18">
     <pose>6 18 0 0 0 0</pose>
-    <link name="link">
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </collision>
-      <visual name="visual">
-        <geometry>
-          <box>
-            <size>1 1 1</size>
-          </box>
-        </geometry>
-      </visual>
-    </link>
-  </model>
-  <model name="wall_7_18">
-    <pose>7 18 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -4034,6 +4059,25 @@
       </visual>
     </link>
   </model>
+  <model name="wall_11_18">
+    <pose>11 18 0 0 0 0</pose>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
   <model name="wall_12_18">
     <pose>12 18 0 0 0 0</pose>
     <link name="link">
@@ -4053,8 +4097,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_14_18">
-    <pose>14 18 0 0 0 0</pose>
+  <model name="wall_13_18">
+    <pose>13 18 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -4072,8 +4116,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_15_18">
-    <pose>15 18 0 0 0 0</pose>
+  <model name="wall_14_18">
+    <pose>14 18 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
@@ -4167,8 +4211,8 @@
       </visual>
     </link>
   </model>
-  <model name="wall_14_19">
-    <pose>14 19 0 0 0 0</pose>
+  <model name="wall_16_19">
+    <pose>16 19 0 0 0 0</pose>
     <link name="link">
       <collision name="collision">
         <geometry>
