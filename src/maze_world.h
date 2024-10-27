@@ -25,6 +25,7 @@ void generateMazeWorld(const vector<vector<int>>& maze, const string& filename, 
         for (int x = 0; x < maze[0].size(); x++) {
             if (maze[y][x] == 0) {
                 worldFile << "  <model name=\"wall_" << x << "_" << y << "\">\n";
+                worldFile << "    <static>true</static>\n";
                 worldFile << "    <pose>" << x << " " << y << " 0 0 0 0</pose>\n";
                 worldFile << "    <link name=\"link\">\n";
                 worldFile << "      <collision name=\"collision\">\n";
@@ -45,6 +46,7 @@ void generateMazeWorld(const vector<vector<int>>& maze, const string& filename, 
                 worldFile << "  </model>\n";
             } else if (make_pair(x, y) == goal) {
                 worldFile << "  <model name=\"goal_" << x << "_" << y << "\">\n";
+                worldFile << "    <static>true</static>\n";
                 worldFile << "    <pose>" << x << " " << y << " 0 0 0 0</pose>\n";
                 worldFile << "    <link name=\"link\">\n";
                 worldFile << "      <collision name=\"collision\">\n";
@@ -68,6 +70,7 @@ void generateMazeWorld(const vector<vector<int>>& maze, const string& filename, 
                 worldFile << "  </model>\n";
             } else if (make_pair(x, y) == start) {
                 worldFile << "  <model name=\"start_" << x << "_" << y << "\">\n";
+                worldFile << "    <static>true</static>\n";
                 worldFile << "    <pose>" << x << " " << y << " 0 0 0 0</pose>\n";
                 worldFile << "    <link name=\"link\">\n";
                 worldFile << "      <collision name=\"collision\">\n";
