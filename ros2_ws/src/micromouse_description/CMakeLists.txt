@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.8)
 project(micromouse_description)
 
+find_package(rclcpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -25,6 +29,12 @@ install(DIRECTORY urdf/
 install(DIRECTORY worlds/
   DESTINATION share/${PROJECT_NAME}/worlds
 )
+
+add_executable(navigation src/navigation.cpp)
+ament_target_dependencies(navigation rclcpp geometry_msgs sensor_msgs)
+install(TARGETS
+  navigation
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
