@@ -148,6 +148,24 @@
         <mul value="0.01"/>
         <mu2 value="0.01"/>
     </gazebo>
+
+    <!-- Addomg pdp,etru tp Gazenp -->
+
+    <gazebo>
+        <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
+            <ros>
+                <namespace>/</namespace>
+                <remapping>odom:=/odom</remapping> <!-- Publishes odometry on /odom -->
+            </ros>
+            <odometryFrame>odom</odometryFrame>          <!-- Sets the frame for odometry -->
+            <odometryTopic>odom</odometryTopic>          <!-- Topic name for odometry -->
+            <leftJoint>left_wheel_joint</leftJoint>      <!-- Left wheel joint name -->
+            <rightJoint>right_wheel_joint</rightJoint>   <!-- Right wheel joint name -->
+            <wheelSeparation>0.35</wheelSeparation>      <!-- Replace with actual wheel separation -->
+            <wheelRadius>0.05</wheelRadius>              <!-- Replace with actual wheel radius -->
+            <publishOdom>true</publishOdom>              <!-- Enables odometry publishing -->
+        </plugin>
+    </gazebo>
     
     
 </robot>

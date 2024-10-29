@@ -4,6 +4,8 @@ project(micromouse_description)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -31,7 +33,7 @@ install(DIRECTORY worlds/
 )
 
 add_executable(navigation src/navigation.cpp)
-ament_target_dependencies(navigation rclcpp geometry_msgs sensor_msgs)
+ament_target_dependencies(navigation rclcpp geometry_msgs sensor_msgs tf2_ros nav_msgs)
 install(TARGETS
   navigation
   DESTINATION lib/${PROJECT_NAME})
