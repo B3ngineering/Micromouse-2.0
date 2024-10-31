@@ -7,26 +7,26 @@
         <color rgba="1 1 1 1" />
     </material>
 
-    <material name="gray1">
-        <color rgba="0.5 0.5 0.5 1" />
+    <material name="orange">
+        <color rgba="1 0.3 0.1 1"/>
     </material>
 
-    <material name="gray2">
-        <color rgba="0.7 0.7 0.7 1" />
+    <material name="blue">
+        <color rgba="0.2 0.2 1 1"/>
     </material>
 
     <material name="black">
         <color rgba="0 0 0 1"/>
     </material>
 
-    <!--  Base link -->
+    <!-- BASE LINK -->
 
     <link name="base_link">
 
     </link>
 
 
-    <!-- Chassis Link -->
+    <!-- CHASSIS LINK -->
 
     <joint name="chassis_joint" type="fixed">
         <parent link="base_link"/>
@@ -56,8 +56,8 @@
     <gazebo reference="chassis">
         <material>Gazebo/White</material>
     </gazebo>
-    
-    <!-- Left Wheel Link -->
+
+    <!-- LEFT WHEEL LINK -->
 
     <joint name="left_wheel_joint" type="continuous">
         <parent link="base_link"/>
@@ -71,7 +71,7 @@
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
-            <material name="gray1"/>
+            <material name="blue"/>
         </visual>
         <collision>
             <geometry>
@@ -84,10 +84,13 @@
     </link>
 
     <gazebo reference="left_wheel">
-        <material>Gazebo/Black</material>
+        <material>Gazebo/Blue</material>
     </gazebo>
 
-    <!-- Right Wheel Link -->
+
+
+
+    <!-- RIGHT WHEEL LINK -->
 
     <joint name="right_wheel_joint" type="continuous">
         <parent link="base_link"/>
@@ -101,7 +104,7 @@
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
-            <material name="gray1"/>
+            <material name="blue"/>
         </visual>
         <collision>
             <geometry>
@@ -114,10 +117,11 @@
     </link>
 
     <gazebo reference="right_wheel">
-        <material>Gazebo/Black</material>
+        <material>Gazebo/Blue</material>
     </gazebo>
 
-    <!-- Caster Wheel Link -->
+
+    <!-- CASTER WHEEL LINK -->
 
     <joint name="caster_wheel_joint" type="fixed">
         <parent link="chassis"/>
@@ -145,11 +149,9 @@
 
     <gazebo reference="caster_wheel">
         <material>Gazebo/Black</material>
-        <mul value="0.01"/>
-        <mu2 value="0.01"/>
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
     </gazebo>
-
-    <!-- Addomg pdp,etru tp Gazenp -->
 
     <gazebo>
         <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
@@ -166,6 +168,5 @@
             <publishOdom>true</publishOdom>              <!-- Enables odometry publishing -->
         </plugin>
     </gazebo>
-    
-    
+
 </robot>
