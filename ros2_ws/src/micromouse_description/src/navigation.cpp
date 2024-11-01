@@ -34,7 +34,8 @@ private:
     enum class State {
         MOVING_FORWARD,
         DETECTING_WALL,
-        TURNING
+        TURNING,
+        REFINING_TURN
     };
 
     void laser_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
@@ -43,21 +44,25 @@ private:
             const float safe_distance = 0.5;
             wall_detected_ = false;
 
-            for (const auto &range : msg->ranges) {
-                if (range < safe_distance) {
-                    wall_detected_ = true;
-                    break;
-                }
+            // Get distances to walls in each direction
+            float north_distance = msg->ranges[0];
+            float east_distance = msg->ranges[1];
+            float south_distance = msg->ranges[2];
+            float west_distance = msg->ranges[3];
+            
+            // Check if a wall is detected in the north direction
+            if (north_distance < safe_distance) {
+                wall_detected_ = true;
             }
 
             // Transition to TURNING state if a wall is detected
             if (wall_detected_) {
                 state_ = State::TURNING;
                 initial_yaw_ = current_yaw_;
-                target_yaw_ = normalize_angle(initial_yaw_ + M_PI / 2); // Set target to 90 degrees
+                target_yaw_ = normalize_angle(initial_yaw_ + M_PI / 2);
                 RCLCPP_INFO(this->get_logger(), "Wall detected! Preparing to turn.");
             } else {
-                state_ = State::MOVING_FORWARD; // No wall, continue moving forward
+                state_ = State::MOVING_FORWARD;
             }
         }
     }
@@ -84,7 +89,7 @@ private:
             case State::MOVING_FORWARD:
                 twist.linear.x = 0.5;
                 twist.angular.z = 0.0;
-                state_ = State::DETECTING_WALL; // Check for walls after moving forward
+                state_ = State::DETECTING_WALL;
                 RCLCPP_INFO(this->get_logger(), "Moving forward.");
                 break;
 
@@ -92,15 +97,32 @@ private:
                 double angle_difference = normalize_angle(target_yaw_ - current_yaw_);
                 const double tolerance = 0.01;
 
+                // Proportional control to turn more smoothly
                 if (fabs(angle_difference) > tolerance) {
-                    // Proportional control to turn more smoothly
                     twist.angular.z = 1.0 * (angle_difference > 0 ? 1.0 : -1.0);
                     twist.linear.x = 0.0;
                     RCLCPP_INFO(this->get_logger(), "Turning.");
                 } else {
                     twist.angular.z = 0.0;
-                    state_ = State::MOVING_FORWARD; // After turning, continue moving forward
-                    RCLCPP_INFO(this->get_logger(), "Turn complete. Moving forward.");
+                    state_ = State::REFINING_TURN; 
+                    RCLCPP_INFO(this->get_logger(), "Turn complete. Refining turn.");
+                }
+                break;
+            }
+
+            case State::REFINING_TURN: {
+                double angle_difference = normalize_angle(target_yaw_ - current_yaw_);
+                const double fine_tolerance = 0.001; 
+
+                // Fine-tune the turn for precision
+                if (fabs(angle_difference) > fine_tolerance) {
+                    twist.angular.z = 0.2 * (angle_difference > 0 ? 1.0 : -1.0);
+                    twist.linear.x = 0.0;
+                    RCLCPP_INFO(this->get_logger(), "Refining turn.");
+                } else {
+                    twist.angular.z = 0.0;
+                    state_ = State::MOVING_FORWARD;
+                    RCLCPP_INFO(this->get_logger(), "Refinement complete. Moving forward.");
                 }
                 break;
             }
