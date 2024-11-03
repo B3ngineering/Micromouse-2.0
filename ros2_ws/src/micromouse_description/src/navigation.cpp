@@ -15,19 +15,19 @@ public:
         // Subscribe to Lidar data
         laser_subscriber_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
             "/laser_controller/out", 5, 
-            std::bind(&MouseMover::laser_callback, this, std::placeholders::_1));
+            bind(&MouseMover::laser_callback, this, placeholders::_1));
 
         // Subscribe to Odometry data
         odom_subscriber_ = this->create_subscription<nav_msgs::msg::Odometry>(
             "/odom", 5, 
-            std::bind(&MouseMover::odom_callback, this, std::placeholders::_1));
+            bind(&MouseMover::odom_callback, this, placeholders::_1));
         
         // Create a publisher for the robot's velocity
         publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 
         // Set a timer to periodically call the move_robot function
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(10), std::bind(&MouseMover::move_mouse, this));
+            chrono::milliseconds(10), bind(&MouseMover::move_mouse, this));
 
         RCLCPP_INFO(this->get_logger(), "Navigation node initialized.");
     }
@@ -126,7 +126,7 @@ private:
                     twist.linear.x = 0.0;
                     state_ = State::DETECTING_WALL;
                     RCLCPP_INFO(this->get_logger(), "0.5 meter traveled. Checking for walls.");
-                    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 100 milliseconds
+                    this_thread::sleep_for(chrono::milliseconds(1000)); // Sleep for 100 milliseconds
                 }
                 
                 break;
@@ -200,7 +200,7 @@ private:
 
 int main(int argc, char *argv[]) {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<MouseMover>());
+    rclcpp::spin(make_shared<MouseMover>());
     rclcpp::shutdown();
     return 0;
 }
