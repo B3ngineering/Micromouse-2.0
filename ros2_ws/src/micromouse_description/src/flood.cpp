@@ -74,25 +74,130 @@ private:
     };
 
     void laser_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
-        // Similar logic to detect walls and decide turning direction
-        // ...
-        // Determine valid naighbours based on which cells are occupied
-        // Check values of neighbours based on the current position
+        if (state_ == State::DETECTING_WALL) {
+            // Update the maze based on laser scan data
+            const float safe_distance = 0.75;
+            int x = static_cast<int>(current_x_);
+            int y = static_cast<int>(current_y_);
 
+            if (msg->ranges[0] < safe_distance) {
+                maze_[x][y + 1] = INT_MAX; // Front wall
+            }
+            if (msg->ranges[1] < safe_distance) {
+                maze_[x - 1][y] = INT_MAX; // Left wall
+            }
+            if (msg->ranges[3] < safe_distance) {
+                maze_[x + 1][y] = INT_MAX; // Right wall
+            }
+
+            state_ = State::MOVING_FORWARD;
+        }
     }
 
     void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg) {
-        // Similar logic to update current position and yaw
-        // ...
+        // Update current position and yaw
+        RCLCPP_INFO(this->get_logger(), "Current position: (%f, %f)", current_x_, current_y_);
+        RCLCPP_INFO(this->get_logger(), "New position: (%f, %f)", msg->pose.pose.position.x, msg->pose.pose.position.y);
+        tf2::Quaternion q(
+            msg->pose.pose.orientation.x,
+            msg->pose.pose.orientation.y,
+            msg->pose.pose.orientation.z,
+            msg->pose.pose.orientation.w);
+        
+        tf2::Matrix3x3 m(q);
+        double roll, pitch, yaw;
+        m.getRPY(roll, pitch, yaw);
+
+        current_yaw_ = yaw;
+
+        // Update odometry with distance from last step
+        double new_x = msg->pose.pose.position.x;
+        double new_y = msg->pose.pose.position.y;
+
+        distance_traveled_ += sqrt(pow(new_x - current_x_, 2) + pow(new_y - current_y_, 2));
+
+        current_x_ = new_x;
+        current_y_ = new_y;
     }
 
     void move_mouse() {
         auto twist = geometry_msgs::msg::Twist();
 
-        // Implement flood fill logic to explore the maze
-        // ...
+        // Check if the robot has reached the goal
+        if ((goal_x_ - 0.5 <= current_x_ && current_x_ <= goal_x_ + 0.5) && (goal_y_ - 0.5 <= current_y_ && current_y_ <= goal_y_ + 0.5)) {
+            twist.linear.x = 0.0;
+            twist.angular.z = 0.0;
+            publisher_->publish(twist);
+            RCLCPP_INFO(this->get_logger(), "Goal reached!");
+            rclcpp::shutdown();
+        }
+
+        switch (state_) {
+            case State::MOVING_FORWARD: {
+                RCLCPP_INFO(this->get_logger(), "Moving forward. Distance traveled: %f", distance_traveled_);
+
+                // Take a step without taking any action
+                if (distance_traveled_ < 0.99) {
+                    twist.linear.x = 0.5;
+                    twist.angular.z = 0.0;
+                } else {
+                    twist.linear.x = 0.0;
+                    RCLCPP_INFO(this->get_logger(), "0.5 meter traveled. Checking for walls.");
+                    
+                    // Pause and switch state
+                    state_ = State::DETECTING_WALL;
+                    auto stop_twist = geometry_msgs::msg::Twist();
+                    stop_twist.linear.x = 0.0;
+                    stop_twist.angular.z = 0.0;
+                    publisher_->publish(stop_twist);
+                    rclcpp::sleep_for(chrono::seconds(1));
+                }
+                break;
+            }
+
+            case State::TURNING: {
+                double angle_difference = normalize_angle(target_yaw_ - current_yaw_);
+                const double tolerance = 0.01;
+
+                // Calculate angle to turn the robot
+                if (fabs(angle_difference) > tolerance) {
+                    twist.angular.z = 1.0 * (angle_difference > 0 ? 1.0 : -1.0);
+                    twist.linear.x = 0.0;
+                } else {
+                    twist.angular.z = 0.0;
+                    state_ = State::REFINING_TURN;
+                    RCLCPP_INFO(this->get_logger(), "Turn complete. Refining turn.");
+                }
+                break;
+            }
+
+            // Refine the turn to be more precise and prevent drift
+            case State::REFINING_TURN: {
+                double angle_difference = normalize_angle(target_yaw_ - current_yaw_);
+                const double fine_tolerance = 0.001;
+
+                if (fabs(angle_difference) > fine_tolerance) {
+                    twist.angular.z = 0.2 * (angle_difference > 0 ? 1.0 : -1.0);
+                    twist.linear.x = 0.0;
+                } else {
+                    twist.angular.z = 0.0;
+                    state_ = State::MOVING_FORWARD;
+                    distance_traveled_ = 0.0;
+                    RCLCPP_INFO(this->get_logger(), "Refinement complete. Moving forward.");
+                }
+                break;
+            }
+
+            case State::DETECTING_WALL:
+                flood_fill();
+                break;
+        }
 
         publisher_->publish(twist);
+    }
+
+    void flood_fill() {
+        state_ = State::TURNING;
     }
 
     double normalize_angle(double angle) {
@@ -114,6 +219,7 @@ private:
     double current_x_;
     double current_y_;
     double distance_traveled_;
+
 };
 
 int main(int argc, char *argv[]) {
