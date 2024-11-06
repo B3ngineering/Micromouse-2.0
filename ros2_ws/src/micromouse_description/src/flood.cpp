@@ -74,30 +74,30 @@ private:
     };
 
     void laser_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
-        if (state_ == State::DETECTING_WALL) {
-            // Update the maze based on laser scan data
-            const float safe_distance = 0.75;
-            int x = static_cast<int>(current_x_);
-            int y = static_cast<int>(current_y_);
-
-            if (msg->ranges[0] < safe_distance) {
-                maze_[x][y + 1] = INT_MAX; // Front wall
-            }
-            if (msg->ranges[1] < safe_distance) {
-                maze_[x - 1][y] = INT_MAX; // Left wall
-            }
-            if (msg->ranges[3] < safe_distance) {
-                maze_[x + 1][y] = INT_MAX; // Right wall
-            }
-
-            state_ = State::MOVING_FORWARD;
+        // if (state_ != State::DETECTING_WALL) {
+        //     return;
+        // }
+        // Update the maze based on laser scan data
+        const float safe_distance = 0.75;
+        int x = static_cast<int>(current_x_);
+        int y = static_cast<int>(current_y_);
+        if (msg->ranges[0] < safe_distance) {
+            maze_[x][y + 1] = INT_MAX; // Front wall
+            RCLCPP_INFO(this->get_logger(), "Front wall detected at (%d, %d)", x, y + 1);
         }
+        if (msg->ranges[1] < safe_distance) {
+            maze_[x - 1][y] = INT_MAX; // Left wall
+            RCLCPP_INFO(this->get_logger(), "Left wall detected at (%d, %d)", x - 1, y);
+        }
+        if (msg->ranges[3] < safe_distance) {
+            maze_[x + 1][y] = INT_MAX; // Right wall
+            RCLCPP_INFO(this->get_logger(), "Right wall detected at (%d, %d)", x + 1, y);
+        }
+
     }
 
     void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg) {
         // Update current position and yaw
-        RCLCPP_INFO(this->get_logger(), "Current position: (%f, %f)", current_x_, current_y_);
-        RCLCPP_INFO(this->get_logger(), "New position: (%f, %f)", msg->pose.pose.position.x, msg->pose.pose.position.y);
         tf2::Quaternion q(
             msg->pose.pose.orientation.x,
             msg->pose.pose.orientation.y,
@@ -134,7 +134,6 @@ private:
 
         switch (state_) {
             case State::MOVING_FORWARD: {
-                RCLCPP_INFO(this->get_logger(), "Moving forward. Distance traveled: %f", distance_traveled_);
 
                 // Take a step without taking any action
                 if (distance_traveled_ < 0.99) {
@@ -150,6 +149,12 @@ private:
                     stop_twist.linear.x = 0.0;
                     stop_twist.angular.z = 0.0;
                     publisher_->publish(stop_twist);
+                    for (int x = 0; x < MAZE_SIZE_; ++x) {
+                        for (int y = 0; y < MAZE_SIZE_; ++y) {
+                            cout << maze_[x][y] << " ";
+                        }
+                        cout << endl;
+                    }
                     rclcpp::sleep_for(chrono::seconds(1));
                 }
                 break;
@@ -189,6 +194,10 @@ private:
             }
 
             case State::DETECTING_WALL:
+            
+                // Wait for laser callback data
+                rclcpp::sleep_for(chrono::milliseconds(1000));
+                
                 flood_fill();
                 break;
         }
@@ -197,7 +206,58 @@ private:
     }
 
     void flood_fill() {
-        state_ = State::TURNING;
+        // Initialize the queue with the goal cell
+        queue<pair<int, int>> q;
+        int start_x = static_cast<int>(current_x_);
+        int start_y = static_cast<int>(current_y_);
+        q.push({start_x, start_y});
+
+        while (!q.empty()) {
+            auto [x, y] = q.front();
+            q.pop();
+
+            for (auto [dx, dy] : directions_) {
+                int nx = x + dx;
+                int ny = y + dy;
+
+                if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] != INT_MAX && maze_[nx][ny] > maze_[x][y] + 1) {
+                    maze_[nx][ny] = maze_[x][y] + 1;
+                    q.push({nx, ny});
+                }
+            }
+        }
+
+        // Find the direction with the lowest value
+        int x = static_cast<int>(current_x_);   
+        int y = static_cast<int>(current_y_);
+        int min_value = maze_[x][y];
+        pair<int, int> next_cell = {x, y};
+
+        // Check the four directions
+        for (auto [dx, dy] : directions_) {
+            int nx = x + dx;
+            int ny = y + dy;
+
+            if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] < min_value) {
+                min_value = maze_[nx][ny];
+                next_cell = {nx, ny};
+            }
+        }
+        RCLCPP_INFO(this->get_logger(), "Next cell: (%d, %d) with value: %d", next_cell.first, next_cell.second, min_value);
+        // Calculate the angle to turn the robot
+        if (next_cell != make_pair(x, y)) {
+            double angle_to_target;
+            double dx = next_cell.first - x;
+            double dy = next_cell.second - y;
+            angle_to_target = atan2(dy, dx);
+            target_yaw_ = normalize_angle(angle_to_target);
+
+            state_ = State::TURNING;
+            initial_yaw_ = current_yaw_;
+        } else {
+            state_ = State::MOVING_FORWARD;
+        }
+
     }
 
     double normalize_angle(double angle) {
@@ -220,6 +280,8 @@ private:
     double current_y_;
     double distance_traveled_;
 
+    // Flood fill
+    const vector<pair<int, int>> directions_ = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 };
 
 int main(int argc, char *argv[]) {
