@@ -74,26 +74,49 @@ private:
     };
 
     void laser_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
-        // if (state_ != State::DETECTING_WALL) {
-        //     return;
-        // }
-        // Update the maze based on laser scan data
-        const float safe_distance = 0.75;
-        int x = static_cast<int>(current_x_);
-        int y = static_cast<int>(current_y_);
-        if (msg->ranges[0] < safe_distance) {
-            maze_[x][y + 1] = INT_MAX; // Front wall
-            RCLCPP_INFO(this->get_logger(), "Front wall detected at (%d, %d)", x, y + 1);
+        if (state_ == State::TURNING) {
+            return;
         }
-        if (msg->ranges[1] < safe_distance) {
-            maze_[x - 1][y] = INT_MAX; // Left wall
-            RCLCPP_INFO(this->get_logger(), "Left wall detected at (%d, %d)", x - 1, y);
-        }
-        if (msg->ranges[3] < safe_distance) {
-            maze_[x + 1][y] = INT_MAX; // Right wall
-            RCLCPP_INFO(this->get_logger(), "Right wall detected at (%d, %d)", x + 1, y);
+        const float safe_distance = 0.6;
+        int x = static_cast<int>(round(current_x_));
+        int y = static_cast<int>(round(current_y_));
+        RCLCPP_INFO(this->get_logger(), "Current cell: (%d, %d)", x, y);
+
+        // Determine the direction the robot is facing based on yaw
+        int forward_x = 0, forward_y = 0;
+        int left_x = 0, left_y = 0;
+        int right_x = 0, right_y = 0;
+
+        if (fabs(current_yaw_ - 0.0) < 0.1) { // Facing East
+            forward_x = 1; forward_y = 0;
+            left_x = 0; left_y = 1;
+            right_x = 0; right_y = -1;
+        } else if (fabs(current_yaw_ - M_PI_2) < 0.1) { // Facing North
+            forward_x = 0; forward_y = 1;
+            left_x = -1; left_y = 0;
+            right_x = 1; right_y = 0;
+        } else if (fabs(current_yaw_ + M_PI_2) < 0.1) { // Facing South
+            forward_x = 0; forward_y = -1;
+            left_x = 1; left_y = 0;
+            right_x = -1; right_y = 0;
+        } else if (fabs(current_yaw_ - M_PI) < 0.1 || fabs(current_yaw_ + M_PI) < 0.1) { // Facing West
+            forward_x = -1; forward_y = 0;
+            left_x = 0; left_y = -1;
+            right_x = 0; right_y = 1;
         }
 
+        if (msg->ranges[0] < safe_distance) {
+            maze_[x + forward_x][y + forward_y] = INT_MAX; // Front wall
+            RCLCPP_INFO(this->get_logger(), "Front wall detected at (%d, %d)", x + forward_x, y + forward_y);
+        }
+        if (msg->ranges[1] < safe_distance) {
+            maze_[x + left_x][y + left_y] = INT_MAX; // Left wall
+            RCLCPP_INFO(this->get_logger(), "Left wall detected at (%d, %d)", x + left_x, y + left_y);
+        }
+        if (msg->ranges[3] < safe_distance) {
+            maze_[x + right_x][y + right_y] = INT_MAX; // Right wall
+            RCLCPP_INFO(this->get_logger(), "Right wall detected at (%d, %d)", x + right_x, y + right_y);
+        }
     }
 
     void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg) {
@@ -142,7 +165,7 @@ private:
                 } else {
                     twist.linear.x = 0.0;
                     RCLCPP_INFO(this->get_logger(), "0.5 meter traveled. Checking for walls.");
-                    
+                    RCLCPP_INFO(this->get_logger(), "Current position: (%f, %f)", current_x_, current_y_);
                     // Pause and switch state
                     state_ = State::DETECTING_WALL;
                     auto stop_twist = geometry_msgs::msg::Twist();
@@ -228,8 +251,8 @@ private:
         }
 
         // Find the direction with the lowest value
-        int x = static_cast<int>(current_x_);   
-        int y = static_cast<int>(current_y_);
+        int x = static_cast<int>(round(current_x_));
+        int y = static_cast<int>(round(current_y_));
         int min_value = maze_[x][y];
         pair<int, int> next_cell = {x, y};
 
@@ -237,7 +260,7 @@ private:
         for (auto [dx, dy] : directions_) {
             int nx = x + dx;
             int ny = y + dy;
-
+            RCLCPP_INFO(this->get_logger(), "Maze value at (%d, %d): %d", nx, ny, maze_[nx][ny]);
             if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] < min_value) {
                 min_value = maze_[nx][ny];
                 next_cell = {nx, ny};
