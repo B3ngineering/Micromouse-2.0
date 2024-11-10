@@ -80,7 +80,7 @@ int main() {
 
     generateMazeWorld(my_maze.maze, "maze.world", start, end);
     
-    ofstream outFile("maze.bin", std::ios::binary);
+    ofstream outFile("maze/maze.bin", std::ios::binary);
     int rows = my_maze.maze.size();
     int cols = my_maze.maze[0].size();
 

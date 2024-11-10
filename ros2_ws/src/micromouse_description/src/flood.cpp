@@ -86,36 +86,41 @@ private:
         int forward_x = 0, forward_y = 0;
         int left_x = 0, left_y = 0;
         int right_x = 0, right_y = 0;
+        string direction;
 
         if (fabs(current_yaw_ - 0.0) < 0.1) { // Facing East
             forward_x = 1; forward_y = 0;
             left_x = 0; left_y = 1;
             right_x = 0; right_y = -1;
+            direction = "East";
         } else if (fabs(current_yaw_ - M_PI_2) < 0.1) { // Facing North
             forward_x = 0; forward_y = 1;
             left_x = -1; left_y = 0;
             right_x = 1; right_y = 0;
+            direction = "North";
         } else if (fabs(current_yaw_ + M_PI_2) < 0.1) { // Facing South
             forward_x = 0; forward_y = -1;
             left_x = 1; left_y = 0;
             right_x = -1; right_y = 0;
+            direction = "South";
         } else if (fabs(current_yaw_ - M_PI) < 0.1 || fabs(current_yaw_ + M_PI) < 0.1) { // Facing West
             forward_x = -1; forward_y = 0;
             left_x = 0; left_y = -1;
             right_x = 0; right_y = 1;
+            direction = "West";
         }
 
         if (msg->ranges[0] < safe_distance) {
             maze_[x + forward_x][y + forward_y] = INT_MAX; // Front wall
-            RCLCPP_INFO(this->get_logger(), "Front wall detected at (%d, %d)", x + forward_x, y + forward_y);
+            RCLCPP_INFO(this->get_logger(), "Front wall detected at (%d, %d) while facing %s", x + forward_x, y + forward_y, direction.c_str());
         }
         if (msg->ranges[1] < safe_distance) {
             maze_[x + left_x][y + left_y] = INT_MAX; // Left wall
-            RCLCPP_INFO(this->get_logger(), "Left wall detected at (%d, %d)", x + left_x, y + left_y);
+            RCLCPP_INFO(this->get_logger(), "Left wall detected at (%d, %d) while facing %s", x + left_x, y + left_y, direction.c_str());
         }
         if (msg->ranges[3] < safe_distance) {
             maze_[x + right_x][y + right_y] = INT_MAX; // Right wall
-            RCLCPP_INFO(this->get_logger(), "Right wall detected at (%d, %d)", x + right_x, y + right_y);
+            RCLCPP_INFO(this->get_logger(), "Right wall detected at (%d, %d) while facing %s", x + right_x, y + right_y, direction.c_str());
         }
     }
 
@@ -243,9 +248,12 @@ private:
                 int nx = x + dx;
                 int ny = y + dy;
 
-                if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] != INT_MAX && maze_[nx][ny] > maze_[x][y] + 1) {
-                    maze_[nx][ny] = maze_[x][y] + 1;
-                    q.push({nx, ny});
+                if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] != INT_MAX) {
+                    int new_value = maze_[x][y] + 1;
+                    if (maze_[nx][ny] > new_value) {
+                        maze_[nx][ny] = new_value;
+                        q.push({nx, ny});
+                    }
                 }
             }
         }
@@ -260,27 +268,49 @@ private:
         for (auto [dx, dy] : directions_) {
             int nx = x + dx;
             int ny = y + dy;
+            if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] != INT_MAX) {
             RCLCPP_INFO(this->get_logger(), "Maze value at (%d, %d): %d", nx, ny, maze_[nx][ny]);
-            if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] < min_value) {
+            if (maze_[nx][ny] < min_value) {
                 min_value = maze_[nx][ny];
                 next_cell = {nx, ny};
             }
+            }
+        }
+
+        // If no valid next cell is found, stay in the current cell
+        if (next_cell == make_pair(x, y)) {
+            RCLCPP_WARN(this->get_logger(), "No valid next cell found. Staying in the current cell.");
         }
         RCLCPP_INFO(this->get_logger(), "Next cell: (%d, %d) with value: %d", next_cell.first, next_cell.second, min_value);
-        // Calculate the angle to turn the robot
+
+        // Somewhere in here we have to update the other cells in our path
+
+        // Update the path values by 1
         if (next_cell != make_pair(x, y)) {
-            double angle_to_target;
-            double dx = next_cell.first - x;
-            double dy = next_cell.second - y;
-            angle_to_target = atan2(dy, dx);
+            int target_x = next_cell.first;
+            int target_y = next_cell.second;
+            double angle_to_target = atan2(target_y - current_y_, target_x - current_x_);
             target_yaw_ = normalize_angle(angle_to_target);
 
+            // Update the path values
+            while (x != target_x || y != target_y) {
+                for (auto [dx, dy] : directions_) {
+                    int nx = x + dx;
+                    int ny = y + dy;
+
+                    if (nx >= 0 && nx < MAZE_SIZE_ && ny >= 0 && ny < MAZE_SIZE_ && maze_[nx][ny] == maze_[x][y] - 1) {
+                        maze_[x][y] = maze_[nx][ny] + 1;
+                        x = nx;
+                        y = ny;
+                        break;
+                    }
+                }
+            }
+
             state_ = State::TURNING;
-            initial_yaw_ = current_yaw_;
         } else {
             state_ = State::MOVING_FORWARD;
         }
-
     }
 
     double normalize_angle(double angle) {
@@ -305,6 +335,8 @@ private:
 
     // Flood fill
     const vector<pair<int, int>> directions_ = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+
 };
 
 int main(int argc, char *argv[]) {

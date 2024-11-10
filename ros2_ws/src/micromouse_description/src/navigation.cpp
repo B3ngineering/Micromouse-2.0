@@ -56,17 +56,16 @@ private:
 
         for (int x = 0; x < MAZE_SIZE_; ++x) {
             for (int y = 0; y < MAZE_SIZE_; ++y) {
-                // Set each cell to its Manhattan distance from the goal cell (19, 19)
                 maze_[x][y] = 0;
             }
         }
 
         // Set the values circling the maze to 1
         for (int i = 0; i < MAZE_SIZE_; ++i) {
-            maze_[0][i] = 1; // Top row
-            maze_[MAZE_SIZE_ - 1][i] = 1; // Bottom row
-            maze_[i][0] = 1; // Left column
-            maze_[i][MAZE_SIZE_ - 1] = 1; // Right column
+            maze_[0][i] = 1; 
+            maze_[MAZE_SIZE_ - 1][i] = 1; 
+            maze_[i][0] = 1; 
+            maze_[i][MAZE_SIZE_ - 1] = 1; 
         }
 
         // Print the maze with its values
@@ -194,10 +193,14 @@ private:
             twist.angular.z = 0.0;
             publisher_->publish(twist);
             RCLCPP_INFO(this->get_logger(), "Maze mapping successful!");
+
+            // Ensuring maze is clear
             for (const auto& cell : traveled_path_) {
                 maze_[cell.first][cell.second] = 0;
             }
-            ofstream maze_file("../src/maze.bin", ios::binary);
+
+            // Saving maze to binary file for processing
+            ofstream maze_file("../src/maze/maze.bin", ios::binary);
             for (const auto& row : maze_) {
                 maze_file.write(reinterpret_cast<const char*>(row.data()), row.size() * sizeof(int));
             }
@@ -215,8 +218,8 @@ private:
                     twist.linear.x = 0.0;
                     state_ = State::DETECTING_WALL;
                     RCLCPP_INFO(this->get_logger(), "0.5 meter traveled. Checking for walls.");
-                    this_thread::sleep_for(chrono::milliseconds(1000)); // Sleep for 100 milliseconds
-                    // Print the maze with its values
+                    this_thread::sleep_for(chrono::milliseconds(1000));
+
                     for (int x = 0; x < MAZE_SIZE_; ++x) {
                         for (int y = 0; y < MAZE_SIZE_; ++y) {
                             cout << maze_[x][y] << " ";

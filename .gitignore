@@ -2,7 +2,8 @@
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
-src/maze_generation
-src/maze.bin
+src/maze/maze_generation
+src/maze/maze.bin
 src/flood
+ros2_ws/src/micromouse_description/src/path.bin
 .vscode

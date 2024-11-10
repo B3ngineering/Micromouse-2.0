@@ -53,7 +53,7 @@ vector<pair<int, int>> flood_fill(vector<vector<int>>& maze, pair<int, int> star
 
 int main() {
      // Read the maze from the binary file
-    vector<vector<int>> maze = readMaze("maze.bin");
+    vector<vector<int>> maze = readMaze("maze/maze.bin");
 
     // Display the loaded maze with 0s and 1s swapped
     for (auto& row : maze) {
@@ -76,5 +76,18 @@ int main() {
     }
     cout << "\n";
 
+    // Save the path to a binary file
+    ofstream outFile("../ros2_ws/src/micromouse_description/src/path.bin", ios::binary);
+    if (outFile.is_open()) {
+        int pathSize = path.size();
+        outFile.write(reinterpret_cast<char*>(&pathSize), sizeof(pathSize));
+        for (const auto& [x, y] : path) {
+            outFile.write(reinterpret_cast<const char*>(&x), sizeof(x));
+            outFile.write(reinterpret_cast<const char*>(&y), sizeof(y));
+        }
+        outFile.close();
+    } else {
+        cerr << "Unable to open file for writing\n";
+    }
     return 0;
 }
