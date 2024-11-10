@@ -24,12 +24,18 @@ vector<vector<int>> readMaze(const string& filename) {
     // Read the maze data
     for (int i = 0; i < rows; ++i) {
         inFile.read(reinterpret_cast<char*>(maze[i].data()), maze[i].size() * sizeof(int));
-        cout << "Read row " << i << ": ";
-        for (int cell : maze[i]) {
-            cout << cell << " ";
-        }
-        cout << endl;
     }
+
+    // Flip the maze by switching rows and columns
+    vector<vector<int>> flippedMaze(cols, vector<int>(rows));
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            flippedMaze[j][i] = maze[i][j];
+        }
+    }
+
+    maze = flippedMaze;
+
     inFile.close();
     cout << "Finished reading the maze." << endl;
 
