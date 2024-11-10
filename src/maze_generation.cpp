@@ -3,6 +3,7 @@
 #include <stack>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 #include "maze_world.h"
 
@@ -78,5 +79,18 @@ int main() {
     end = {19, 19};
 
     generateMazeWorld(my_maze.maze, "maze.world", start, end);
-    return 0;
+    
+    ofstream outFile("maze.bin", std::ios::binary);
+    int rows = my_maze.maze.size();
+    int cols = my_maze.maze[0].size();
+
+    // Write dimensions to the file
+    outFile.write(reinterpret_cast<const char*>(&rows), sizeof(rows));
+    outFile.write(reinterpret_cast<const char*>(&cols), sizeof(cols));
+
+    // Write the maze data
+    for (const auto& row : my_maze.maze) {
+        outFile.write(reinterpret_cast<const char*>(row.data()), row.size() * sizeof(int));
+    }
+    outFile.close();
 }
