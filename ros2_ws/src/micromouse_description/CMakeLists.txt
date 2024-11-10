@@ -36,9 +36,13 @@ add_executable(navigation src/navigation.cpp)
 ament_target_dependencies(navigation rclcpp geometry_msgs sensor_msgs tf2_ros nav_msgs)
 add_executable(flood src/flood.cpp)
 ament_target_dependencies(flood rclcpp geometry_msgs sensor_msgs tf2_ros nav_msgs)
+add_executable(traversal src/traversal.cpp)
+ament_target_dependencies(traversal rclcpp geometry_msgs sensor_msgs tf2_ros nav_msgs)
+
 install(TARGETS
   navigation
   flood
+  traversal
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

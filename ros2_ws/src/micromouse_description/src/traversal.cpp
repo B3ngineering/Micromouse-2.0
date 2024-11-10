@@ -8,16 +8,13 @@
 #include <thread>
 #include <climits>
 #include <fstream>
+#include <cmath>
 
 using namespace std;
 
 class MouseMover : public rclcpp::Node {
 public:
     MouseMover() : Node("Mouse_Mover"), state_(State::MOVING_FORWARD), initial_yaw_(0.0), target_yaw_(0.0), distance_traveled_(0.0) {
-        // Subscribe to Lidar data
-        laser_subscriber_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-            "/laser_controller/out", 5, 
-            bind(&MouseMover::laser_callback, this, placeholders::_1));
 
         // Subscribe to Odometry data
         odom_subscriber_ = this->create_subscription<nav_msgs::msg::Odometry>(
@@ -33,65 +30,49 @@ public:
 
         RCLCPP_INFO(this->get_logger(), "Navigation node initialized.");
 
-        initialize_maze();
+        read_path_from_file();
     }
 
 private:
     enum class State {
         MOVING_FORWARD,
-        DETECTING_WALL,
         TURNING,
         REFINING_TURN
     };
 
-    // Maze information
-    const int MAZE_SIZE_ = 20;
-    vector<vector<int>> maze_;
-    int goal_x_ = 19;
-    int goal_y_ = 19;
-
-    void initialize_maze() {
-        // Resize the maze grid to MAZE_SIZE x MAZE_SIZE and fill with Manhattan distances
-        maze_.resize(MAZE_SIZE_, vector<int>(MAZE_SIZE_, 0));
-
-        for (int x = 0; x < MAZE_SIZE_; ++x) {
-            for (int y = 0; y < MAZE_SIZE_; ++y) {
-                maze_[x][y] = 0;
-            }
+    void read_path_from_file() {
+        ifstream infile("src/micromouse_description/src/path.bin", ios::binary);
+        if (!infile) {
+            RCLCPP_ERROR(this->get_logger(), "Failed to open path.bin");
+            return;
         }
 
-        // Set the values circling the maze to 1
-        for (int i = 0; i < MAZE_SIZE_; ++i) {
-            maze_[0][i] = 1; 
-            maze_[MAZE_SIZE_ - 1][i] = 1; 
-            maze_[i][0] = 1; 
-            maze_[i][MAZE_SIZE_ - 1] = 1; 
+        int x, y;
+        // Remove the first value from the binary before reading
+        int dummy;
+        infile.read(reinterpret_cast<char*>(&dummy), sizeof(dummy));
+        while (infile.read(reinterpret_cast<char*>(&x), sizeof(x)) &&
+               infile.read(reinterpret_cast<char*>(&y), sizeof(y))) {
+            path_.emplace_back(x, y);
         }
 
-        // Print the maze with its values
-        for (int x = 0; x < MAZE_SIZE_; ++x) {
-            for (int y = 0; y < MAZE_SIZE_; ++y) {
-                cout << maze_[x][y] << " ";
-            }
-            cout << endl;
+        infile.close();
+        if (!path_.empty()) {
+            path_.erase(path_.begin());
         }
+        RCLCPP_INFO(this->get_logger(), "Path loaded from path.bin");
     }
 
-    void laser_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
-        if (state_ == State::DETECTING_WALL) {
-            const float safe_distance = 0.6;
-            int x = static_cast<int>(round(current_x_));
-            int y = static_cast<int>(round(current_y_));
-            RCLCPP_INFO(this->get_logger(), "Current cell: (%d, %d)", x, y);
-            traveled_path_.push_back({x, y});
+    void handle_next() {
 
-            // Determine the direction the robot is facing based on yaw
-            int forward_x = 0, forward_y = 0;
-            int left_x = 0, left_y = 0;
-            int right_x = 0, right_y = 0;
-            string direction;
+        // Check if there is a wall in front of the robot
+        wall_detected_ = false;
 
-            if (fabs(current_yaw_ - 0.0) < 0.1) { // Facing East
+        int forward_x = 0, forward_y = 0;
+        int left_x = 0, left_y = 0;
+        int right_x = 0, right_y = 0;
+        string direction;
+        if (fabs(current_yaw_ - 0.0) < 0.1) { // Facing East
                 forward_x = 1; forward_y = 0;
                 left_x = 0; left_y = 1;
                 right_x = 0; right_y = -1;
@@ -112,52 +93,92 @@ private:
                 right_x = 0; right_y = 1;
                 direction = "West";
             }
+        
+        RCLCPP_INFO(this->get_logger(), "Current direction: %s", direction.c_str());
 
-            if (msg->ranges[0] < safe_distance) {
-                maze_[x + forward_x][y + forward_y] = 1; // Front wall
-            }
-            if (msg->ranges[1] < safe_distance) {
-                maze_[x + left_x][y + left_y] = 1; // Left wall
-            }
-            if (msg->ranges[3] < safe_distance) {
-                maze_[x + right_x][y + right_y] = 1; // Right wall
-            }
-            wall_detected_ = false;
+        // Determine the next direction based on the current path value
+        if (!path_.empty()) {
+            auto next_point = path_.front();
+            path_.erase(path_.begin());
 
-            float front_distance = msg->ranges[0];
-            float right_distance = msg->ranges[3];
-            float left_distance = msg->ranges[1];
-            RCLCPP_INFO(this->get_logger(), "Right distance: %f", right_distance);
-            RCLCPP_INFO(this->get_logger(), "Front distance: %f", front_distance);
-            RCLCPP_INFO(this->get_logger(), "Left distance: %f", left_distance);
+            int next_x = next_point.first;
+            int next_y = next_point.second;
 
-            if (front_distance < safe_distance) {
-                wall_detected_ = true;
-            }
+            RCLCPP_INFO(this->get_logger(), "Travelling to point (%d, %d)", next_x, next_y);
 
-            if (right_distance > 1) {
-                state_ = State::TURNING;
-                initial_yaw_ = current_yaw_;
-                target_yaw_ = normalize_angle(initial_yaw_ - M_PI / 2);
+            int delta_x = static_cast<int>(round(next_x - current_x_));
+            int delta_y = static_cast<int>(round(next_y - current_y_));
 
-                RCLCPP_INFO(this->get_logger(), "No wall on the right. Preparing to turn right.");
-            } else if (wall_detected_) {
-                if (left_distance < 0.6) {
+            if (delta_x > 0) {
+                // Move right
+                if (direction == "North") {
+                    target_yaw_ = normalize_angle(initial_yaw_ - M_PI / 2);
                     state_ = State::TURNING;
-                    initial_yaw_ = current_yaw_;
-                    target_yaw_ = normalize_angle(initial_yaw_ + M_PI);
-                    RCLCPP_INFO(this->get_logger(), "Wall detected in front. Preparing to turn left.");
-                } else {
-                    state_ = State::TURNING;
-                    initial_yaw_ = current_yaw_;
+                } else if (direction == "South") {
                     target_yaw_ = normalize_angle(initial_yaw_ + M_PI / 2);
-                    RCLCPP_INFO(this->get_logger(), "Wall detected in front. Preparing to turn left.");
+                    state_ = State::TURNING;
+                } else if (direction == "East") {
+                    target_yaw_ = normalize_angle(initial_yaw_);
+                    state_ = State::MOVING_FORWARD;
+                } else if (direction == "West") {
+                    target_yaw_ = normalize_angle(initial_yaw_ + M_PI);
+                    state_ = State::TURNING;
                 }
-            } else {
-                state_ = State::MOVING_FORWARD;
-                distance_traveled_ = 0.0;
-                RCLCPP_INFO(this->get_logger(), "Wall detected on the right. Moving forward.");
+            } else if (delta_x < 0) {
+                // Move left
+                if (direction == "North") {
+                    target_yaw_ = normalize_angle(initial_yaw_ + M_PI / 2);
+                    state_ = State::TURNING;
+                } else if (direction == "South") {
+                    target_yaw_ = normalize_angle(initial_yaw_ - M_PI / 2);
+                    state_ = State::TURNING;
+                } else if (direction == "East") {
+                    target_yaw_ = normalize_angle(initial_yaw_ - M_PI);
+                    state_ = State::TURNING;
+                } else if (direction == "West") {
+                    target_yaw_ = normalize_angle(initial_yaw_);
+                    state_ = State::MOVING_FORWARD;
+                }
+            } else if (delta_y > 0) {
+                // Move forward
+                if (direction == "North") {
+                    target_yaw_ = normalize_angle(initial_yaw_);
+                    state_ = State::MOVING_FORWARD;
+                } else if (direction == "South") {
+                    target_yaw_ = normalize_angle(initial_yaw_ + M_PI);
+                    state_ = State::TURNING;
+                } else if (direction == "East") {
+                    target_yaw_ = normalize_angle(initial_yaw_ + M_PI / 2);
+                    state_ = State::TURNING;
+                } else if (direction == "West") {
+                    target_yaw_ = normalize_angle(initial_yaw_ - M_PI / 2);
+                    state_ = State::TURNING;
+                }
+                
+            } else if (delta_y < 0) {
+                // Move backward
+                if (direction == "North") {
+                    target_yaw_ = normalize_angle(initial_yaw_ + M_PI);
+                    state_ = State::TURNING;
+                } else if (direction == "South") {
+                    target_yaw_ = normalize_angle(initial_yaw_);
+                    state_ = State::MOVING_FORWARD;
+                } else if (direction == "East") {
+                    target_yaw_ = normalize_angle(initial_yaw_ - M_PI / 2);
+                    state_ = State::TURNING;
+                } else if (direction == "West") {
+                    target_yaw_ = normalize_angle(initial_yaw_ + M_PI / 2);
+                    state_ = State::TURNING;
+                }
+
             }
+            distance_traveled_ = 0.0;
+            initial_yaw_ = current_yaw_;
+
+        } else {
+            state_ = State::MOVING_FORWARD;
+            distance_traveled_ = 0.0;
+            RCLCPP_INFO(this->get_logger(), "Path completed. Moving forward.");
         }
     }
 
@@ -188,24 +209,12 @@ private:
         auto twist = geometry_msgs::msg::Twist();
 
         // Check if the robot has reached the goal
-        if (traveled_path_.size() > 20 && (0.5 <= current_x_ && current_x_ <= 1.5) && (0.5 <= current_y_ && current_y_ <= 1.5)) {
+        if ((19 <= current_x_ && current_x_ <= 19.5) && (19 <= current_y_ && current_y_ <= 19.5)) {
             twist.linear.x = 0.0;
             twist.angular.z = 0.0;
             publisher_->publish(twist);
-            RCLCPP_INFO(this->get_logger(), "Maze mapping successful!");
+            RCLCPP_INFO(this->get_logger(), "Maze traversed successfully!");
 
-            // Ensuring maze is clear
-            for (const auto& cell : traveled_path_) {
-                maze_[cell.first][cell.second] = 0;
-            }
-
-            // Saving maze to binary file for processing
-            ofstream maze_file("../src/maze/maze.bin", ios::binary);
-            for (const auto& row : maze_) {
-                maze_file.write(reinterpret_cast<const char*>(row.data()), row.size() * sizeof(int));
-            }
-            maze_file.close();
-            RCLCPP_INFO(this->get_logger(), "Maze saved to maze.bin.");
             rclcpp::shutdown();
         }
 
@@ -216,17 +225,12 @@ private:
                     twist.angular.z = 0.0;
                 } else {
                     twist.linear.x = 0.0;
-                    state_ = State::DETECTING_WALL;
+                    twist.angular.z = 0.0;
                     publisher_->publish(twist);
+                    RCLCPP_INFO(this->get_logger(), "Robot stopped.");
                     RCLCPP_INFO(this->get_logger(), "0.5 meter traveled. Checking for walls.");
                     this_thread::sleep_for(chrono::milliseconds(1000));
-
-                    for (int x = 0; x < MAZE_SIZE_; ++x) {
-                        for (int y = 0; y < MAZE_SIZE_; ++y) {
-                            cout << maze_[x][y] << " ";
-                        }
-                        cout << endl;
-                    }
+                    handle_next();
                 }
                 break;
             }
@@ -265,12 +269,6 @@ private:
                 }
                 break;
             }
-
-            case State::DETECTING_WALL:
-                // Wait for laser_callback to set wall_detected_ and update the state
-                twist.linear.x = 0.0;
-                twist.angular.z = 0.0;
-                break;
         }
 
         publisher_->publish(twist);
@@ -295,7 +293,7 @@ private:
     double current_x_;
     double current_y_;
     double distance_traveled_;
-    vector<pair<int, int>> traveled_path_;
+    vector<pair<int, int>> path_;
 };
 
 int main(int argc, char *argv[]) {
